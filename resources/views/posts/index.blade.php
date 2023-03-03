@@ -3,6 +3,7 @@
 @section('content')
     <div class="flex justify-center">
         <div class="w-8/12 bg-white p-6 rounded-lg m-5">
+            @auth
             <form action="{{ route('posts') }}" method="post" class="mb-4">
                 @csrf
                 <div class="mb-4">
@@ -24,30 +25,11 @@
 
                 </div>
             </form>
+            @endauth
 
             @if ($posts->count())
                 @foreach ($posts as $post)
-                    <div class="mb-4">
-                        <a href="" class="font-bold">{{ $post->user->name }}</a> <span
-                            class="text-grey-600 text-sm">{{ $post->created_at->diffForHumans() }}</span>
-
-                        <p> {{ $post->body }} </p>
-
-                        <div class="flex item-center">
-                            <form action="post" class="mr-1" action="{{route('posts.like', $post->id)}}">
-                                @csrf
-                                <button type="submit" class="text-blue-500 "> Like</button>
-                            </form>
-                            <form action="post" class="mr-1">
-                                @csrf
-                                <button type="submit" class="text-blue-500 "> Unlike</button>
-                            </form>
-
-                            {{-- <span> {{ $post->likes->count() }} </span> --}}
-
-                        </div>
-
-                    </div>
+                    <x-post :post="$post"/>
                 @endforeach
 
                 <div> {{ $posts->links() }}</div>

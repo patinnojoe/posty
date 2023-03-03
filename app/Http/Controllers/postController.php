@@ -7,14 +7,28 @@ use App\Models\Post;
 
 class postController extends Controller
 {
+    function __construct()
+    {
+        $this->middleware(['auth'])->only('store', 'destroy');
+    }
     public function index(Request $request)
     {
         // dd($request->user()->posts()->like);
 
-        $posts = Post::paginate(20);
+        $posts = Post::latest()->with(['user', 'likes'])->paginate(20);
         return view('posts.index', [
             'posts' => $posts
         ]);
+    }
+
+    public function show(Post $post)
+    {
+        return view(
+            'posts.show',
+            [
+                'post' => $post
+            ]
+        );
     }
     public function store(Request $request)
     {
@@ -29,4 +43,13 @@ class postController extends Controller
 
         return back();
     }
+    public function destroy(Post $post, Request $request)
+    {
+        $this->authorize('delete', $post);
+
+        $post->delete();
+
+        return back();
+    }
 }
+?>
